@@ -85,3 +85,30 @@ unlabeled = df[~df['predicted_sdgs'].apply(is_valid_label)]
 # Simpan ke file baru
 unlabeled.to_csv(OUTPUT_FILE, index=False)
 print(f"Data yang belum terlabeli SDGs disimpan di: {OUTPUT_FILE}")
+
+# ======================
+# CLEAN LABELS
+# ======================
+
+import pandas as pd
+import os
+
+# File hasil labeling otomatis
+LABELED_FILE = os.path.join('data', '2503_to_3336_labeled.csv')
+OUTPUT_FILE = os.path.join('data', '2503_to_3336_labeled_clean.csv')
+
+# Load data hasil labeling
+df = pd.read_csv(LABELED_FILE)
+
+# Kolom label hasil prediksi bernama 'SDGs' pada file ini
+def clean_choices(val):
+    if isinstance(val, str) and val.startswith('{"choices":['):
+        import re
+        matches = re.findall(r'"(SDG [0-9]+: [^"]+)"', val)
+        return "; ".join(matches)
+    return val
+
+df['SDGs'] = df['SDGs'].apply(clean_choices)
+
+df.to_csv(OUTPUT_FILE, index=False)
+print(f"File hasil sudah dibersihkan dan disimpan di: {OUTPUT_FILE}")
