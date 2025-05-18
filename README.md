@@ -1,8 +1,7 @@
-# Proyek Scraping Data Jurnal Sinta Unila
-
+# Unila World Class University
 ## Deskripsi
 
-Proyek ini adalah aplikasi scraping data untuk mengambil informasi publikasi jurnal dari Sinta Universitas Lampung (Unila). Aplikasi ini menggunakan Selenium dan BeautifulSoup untuk mengotomatisasi proses login dan ekstraksi data jurnal dari portal Sinta Kemdikbud.
+Proyek ini adalah Pengembangan Platform Digital dalam Peningkatan Reputasi Unila Menuju World Class University.
 
 ## Fitur
 
