@@ -13,6 +13,7 @@ Proyek ini adalah Pengembangan Platform Digital dalam Peningkatan Reputasi Unila
 - Penyimpanan kemajuan secara berkala
 - Preprocessing data CSV untuk analisis lebih lanjut
 - Preprocessing NLP pada judul artikel untuk analisis teks
+- Labeling otomatis SDGs pada data artikel menggunakan model machine learning
 
 ## Teknologi yang Digunakan
 
@@ -163,6 +164,28 @@ Preprocessing NLP mencakup:
 Hasil preprocessing NLP akan disimpan dengan format: `[namafile]_nlp.csv`, dan
 vektorisasi disimpan sebagai file terpisah: `[namafile]_nlp_tfidf_vectorizer.pkl` dan `[namafile]_nlp_tfidf_features.pkl`.
 
+### Labeling Otomatis SDGs
+
+Fitur ini melakukan labeling otomatis pada data artikel Sinta menggunakan model machine learning berbasis RandomForest dan TF-IDF. Data latih diambil dari `data/label_sdgs.csv`. Hasil prediksi label SDGs disimpan di `data/sinta_articles_2503_to_3336_labeled.csv`. Data yang belum terlabeli otomatis diekspor ke `data/unlabeled_for_review.csv` untuk labeling manual. Script pembersihan label multi-SDG (format `{"choices":...}`) tersedia, hasil bersih di `data/2503_to_3336_labeled_clean.csv`.
+
+#### Cara Menjalankan Labeling Otomatis
+
+1. Jalankan script labeling otomatis:
+
+```bash
+python interfaces/label_sdgs.py
+```
+
+2. Hasil labeling otomatis akan tersimpan di `data/sinta_articles_2503_to_3336_labeled.csv`.
+3. Untuk data yang belum terlabeli, cek file `data/unlabeled_for_review.csv` dan lakukan labeling manual jika diperlukan.
+4. Untuk membersihkan format label multi-SDG, jalankan script yang sama, hasil bersih ada di `data/2503_to_3336_labeled_clean.csv`.
+
+#### Tips Peningkatan Akurasi
+
+- Tambahkan data latih baru ke `label_sdgs.csv` dari hasil labeling manual.
+- Lakukan retraining model dengan data latih yang diperbarui.
+- Gunakan fitur prediksi top-N SDGs untuk membantu labeling manual.
+
 ### Opsi Tambahan
 
 - **Penyesuaian Waktu Tunggu**: Edit nilai `time.sleep()` di `usecases/scraper.py` untuk mengatur kecepatan scraping
@@ -193,83 +216,3 @@ Proyek ini mengikuti prinsip Clean Architecture dengan pemisahan:
 1. **Entities Layer** - Representasi data (artikel jurnal)
 2. **Interfaces Layer** - Mekanisme akses data (fetcher), output (writer), dan processing (csv_preprocessor)
 3. **Use Cases Layer** - Logika bisnis untuk scraping dan pengolahan data
-
-## Penanganan Error
-
-Aplikasi ini dirancang dengan mekanisme error handling yang kuat:
-
-- **Retries** - Percobaan ulang otomatis (hingga 3x) ketika terjadi kesalahan pada halaman
-- **Progress Saving** - Penyimpanan data berkala untuk mencegah kehilangan data
-- **Auto Re-login** - Login ulang otomatis ketika sesi berakhir
-- **Deduplikasi** - Pencegahan data duplikat dengan normalisasi judul
-
-## Praktik Terbaik
-
-- Gunakan aplikasi ini dengan tanggung jawab dan hormati Terms of Service dari Sinta Kemdikbud
-- Hindari melakukan request terlalu cepat untuk mencegah IP Anda diblokir
-- Secara berkala periksa hasil CSV untuk memastikan kualitas data
-- Lakukan preprocessing data sebelum melakukan analisis untuk memastikan keakuratan hasil
-
-## Analisis Data
-
-Setelah data dipreprocessing, Anda dapat melakukan berbagai analisis seperti:
-
-- Distribusi publikasi per tahun
-- Tren publikasi berdasarkan jumlah sitasi
-- Analisis penulis paling produktif
-- Identifikasi topik jurnal populer berdasarkan judul
-
-### Analisis NLP Lanjutan
-
-Setelah melakukan preprocessing NLP, beberapa analisis yang dapat dilakukan:
-
-- **Topic Modeling** - Menemukan topik umum dari judul artikel
-- **Clustering** - Mengelompokkan artikel berdasarkan kesamaan judul
-- **Keyword Extraction** - Mengidentifikasi kata kunci penting dalam penelitian
-- **Sentiment Analysis** - Menganalisis sentimen dari judul artikel
-- **Trend Analysis** - Menganalisis tren topik penelitian dari waktu ke waktu
-
-## Pengembangan Selanjutnya
-
-- [ ] Implementasi paralelisasi untuk mempercepat proses scraping
-- [ ] Penambahan antarmuka grafis (GUI)
-- [ ] Ekspor ke format lain (Excel, JSON, dll)
-- [ ] Integrasi dengan database relasional atau NoSQL
-- [ ] Analisis data pada artikel yang diambil
-- [ ] Visualisasi data otomatis dari hasil preprocessing
-- [ ] Analisis sentimen dari judul artikel
-
-## Troubleshooting
-
-**Masalah Login**:
-
-- Pastikan kredensial di file `.env` sudah benar
-- Periksa file `login_debug.html` untuk analisis masalah login
-
-**Scraping Lambat**:
-
-- Coba turunkan waktu tunggu di `usecases/scraper.py`
-- Batasi rentang halaman untuk pengujian awal
-
-**Chrome Driver Error**:
-
-- Pastikan versi Chrome WebDriver sesuai dengan versi browser Chrome
-- Restart browser dan aplikasi jika mengalami masalah koneksi
-
-**Error Preprocessing**:
-
-- Pastikan format CSV sesuai dengan yang diharapkan (memiliki kolom Title, Link, Authors, Year, Cited)
-- Periksa apakah pandas dan numpy sudah terinstal dengan benar
-
-## Kontributor
-
-- [Nama Anda]
-- [Nama Kontributor Lain]
-
-## Lisensi
-
-[Jenis Lisensi] - Lihat file LICENSE untuk detail
-
----
-
-Dibuat dengan ❤️ oleh [Nama Tim]
